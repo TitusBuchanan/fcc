@@ -18,3 +18,5 @@ return total;
 }
 
 console.log(totalProfit(weekendProfit,numberOfWeekends));
+
+
