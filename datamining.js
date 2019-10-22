@@ -1,18 +1,14 @@
 var filesys = require("fs");
-var departmentNames;
-var departmentEmployee3d;
 
-// 1.load_dept_names.txt 
+// 1. load_dept_names.txt
 
-function deptNamesSync() {
-  var fileData = filesys.readFileSync("load_dept_names.txt");
-  fileData = fileData.toString();
+var departmentNames = "";
 
-  //console.log(fileData.toString());
-
-  fileData = fileData.replace(/\(|\'|\)/g, "");
-
-  departmentNames = fileData.replace(/\(|\'|\)/g, "");
+function deptNames() {
+  departmentNames = filesys.readFileSync("load_dept_names.txt", "utf8");
+  // filesys.readFile("load_dept_names.txt", "utf8", function(err, data) {
+  // if (err) throw err;
+  departmentNames = departmentNames.replace(/\(|\'|\)/g, "");
   departmentNames = departmentNames.split("\n");
 
   for (var i = 0; i < departmentNames.length; i++) {
@@ -21,73 +17,114 @@ function deptNamesSync() {
   }
   departmentNames.shift();
   console.log(departmentNames);
-
 }
 
-//2.load_dept_emp.txt
 
-function departmentEmployeesSync() {
-  var fileData = filesys.readFileSync("load_dept_emp.txt", "utf8");
+// 2. load_dept_emp.txt
 
+var departmentEmployees3D = "";
+var newEmp3dData = [];
 
-  departmentEmployees = fileData.replace(/\INSERT INTO `dept_emp` VALUES |\(|\'|\)/g, "").replace(/^\s*/gm, '');
-  departmentEmployees = departmentEmployees.split("\n");
+function departmentEmp() {
+  var empData = filesys.readFileSync("load_dept_emp.txt", "utf8"); //SYNC ALLOWS ANOTHER CALLBACK FUCNTIUON
 
+  empData = empData.replace("INSERT INTO `dept_emp` VALUES ", "");
+  empData = empData.replace(/\(|\'|\),/g, "").split("\n");
 
+  var newEmpData = [];
 
-  for (var i = 0; i < departmentEmployees.length; i++) {
-    departmentEmployees[i] = departmentEmployees[i].substring(0, departmentEmployees[i].length - 1);
-    departmentEmployees[i] = departmentEmployees[i].split(",");
+  for (var i = 0; i < empData.length; i++) {
+    if (empData[i] != "" && empData[i].includes("9999")) {
+      newEmpData.push(empData[i].split(","));
+    }
   }
-  departmentEmployees.pop();//.pop takes the last element of the array off
-  //console.log(departmentEmployees)
 
-  var departmentEmployees3D = [];
+
+
   for (var i = 0; i < departmentNames.length; i++) {
-    departmentEmployees3D.push([]);
+    newEmp3dData.push([]);
   }
-  //console.log(departmentEmployees3D)
 
-  for (var i = 0; i < departmentEmployees.length; i++) { // department from empolyees file 
-    //console.log(departmentEmployees[i][1])
-    for (var j = 0; j < departmentNames.length; j++) { //department from names file 
-      //console.log(departmentNames[j][0]);
-      if (departmentEmployees[i][1] == departmentNames[j][0]) {
-        departmentEmployees3D[j].push(departmentEmployees[i])
+  // for (var i = 0; i < )
 
+  for (var i = 0; i < newEmpData.length; i++) {
+    for (var j = 0; j < departmentNames.length; j++) {
+      if (newEmpData[i][1] == departmentNames[j][0]) { // if it matches j equals the sub array index we want
+        newEmp3dData[j].push(newEmpData[i]);
       }
-
 
     }
   }
-  //console.log(departmentEmployees3D);
+
   for (var i = 0; i < departmentNames.length; i++) {
-    for (var j = 0; j < departmentEmployees3D[i].length; j++) {
-      if (departmentEmployees3D[i][j][3] == "9999-01-01") {
-
-      }
-
-
-
-
-    }
-    console.log(departmentNames[i][0], departmentNames[i][1] + ":", departmentEmployees3D[i].length);
-
+    console.log(departmentNames[i][0], departmentNames[i][1], newEmp3dData[i].length)
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-  
+  //console.log(newEmpData);
+  console.log(newEmp3dData);
 }
-deptNamesSync();
-departmentEmployeesSync();
+
+//3. load_salaries.txt
+
+var departmentSalaries3D = "";
+var newSalary3dData = [];
+
+
+function departmentSalaries() {
+  var salaryData = filesys.readFileSync("load_salaries.txt", "utf8"); //SYNC ALLOWS ANOTHER CALLBACK FUCNTIUON
+
+  salaryData = salaryData.replace("INSERT INTO `dept_emp` VALUES ", "");
+  salaryData = salaryData.replace(/\(|\'|\),/g, "").split("\n");
+
+  var newSalaryData = [];
+
+  for (var i = 0; i < salaryData.length; i++) {
+    if (salaryData[i] != "" && salaryData[i].includes("9999")) {
+      newSalaryData.push(salaryData[i].split(","));
+    }
+  }
+  //console.log("sssssssssssss")
+  // console.log(newSalaryData);
+
+  for (var i = 0; i < departmentNames.length; i++) {
+    newSalary3dData.push([]);
+  }
+
+  //Employee ID
+  for (var i = 0; i < newEmp3dData.length; i++) {
+    for (var j = 0; j < newEmp3dData[i].length; j++) {
+      // console.log(newEmp3dData[i][j][0]);
+
+      //salary ID
+      for (var k = 0; k < newSalaryData.length; k++) {
+        //console.log("sal emp id", newSalaryData[k][0]);
+        if (newEmp3dData[i][j][0] == newSalaryData[k][0]) {
+          newSalary3dData[i].push(newSalaryData[k])
+        }
+
+
+      }
+    }
+  }
+
+  for (var i = 0; i < newSalary3dData.length; i++) {
+    var departmentSalaryTotal = 0;
+    for (var j = 0; j < newSalary3dData[i].length; j++) {
+
+      departmentSalaryTotal += parseInt(newSalary3dData[i][j][1], 10);
+    }
+    console.log(departmentNames[i][0], departmentNames[i][1], departmentSalaryTotal);
+
+  }
+ // console.log(newSalary3dData);
+
+
+
+}
+
+
+
+
+deptNames();
+departmentEmp();
+departmentSalaries();
