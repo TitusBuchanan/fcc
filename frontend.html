@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<style>
+    .sitename {
+        display: flex;
+        justify-content: center;
+        background-color: dodgerblue;
+        justify-content: space-around;
+        flex-wrap: wrap;
+
+    }
+
+    .sitename>div {
+        background-color: #f1f1f1;
+        width: 100%;
+        margin: 10px;
+        text-align: center;
+        line-height: 75px;
+        font-size: 20px;
+    }
+
+    .heading {
+        display: flex;
+        justify-content: center;
+        background-color: dodgerblue;
+        justify-content: space-around;
+        flex-wrap: wrap;
+
+    }
+
+    .heading>div {
+        background-color: #f1f1f1;
+        width: 100px;
+        margin: 10px;
+        text-align: center;
+        line-height: 75px;
+        font-size: 20px;
+    }
+
+    .mainImage {
+        display: flex;
+        justify-content: center;
+        background-color: dodgerblue;
+        justify-content: space-around;
+        flex-wrap: wrap;
+
+    }
+
+    .mainImage>div {
+        background-color: #f1f1f1;
+        width: 100%;
+        margin: 10px;
+        text-align: center;
+        line-height: 375px;
+        font-size: 20px;
+    }
+
+    .hotelRooms {
+        display: flex;
+        justify-content: center;
+        background-color: dodgerblue;
+        justify-content: space-around;
+        flex-wrap: wrap;
+
+    }
+
+    .hotelRooms>div {
+        background-color: #f1f1f1;
+        width: 100px;
+        margin: 10px;
+        text-align: center;
+        line-height: 75px;
+        font-size: 20px;
+    }
+</style>
+
+<body>
+    <div class="sitename">
+        <div>Welcome to the JavaScript Hotel</div>
+    </div>
+
+    <div class="heading">
+        <div style="flex-grow: 1">Logo</div>
+        <div style="flex-grow: 1">Book</div>
+        <div style="flex-grow: 8">Menu</div>
+
+
+    </div>
+
+    <div class="mainImage">
+        <div>Website Main Image</div>
+    </div>
+
+    <div class="hotelRooms">
+        <button type="button" onclick="domHotel.listAvailableRooms()">Book a Room</button>
+        <div id="newRoom" div style="flex-grow: 5">Available Rooms</div>
+
+        <div id ="oldRoom" div style="flex-grow: 5">Booked Room</div>
+    </div>
+
+
+
+
+
+
+</body>
+<script>
+    var theAngularHotel = {
+        roomType: ["Single", "Double", "Queen", "King"],
+        roomNumbers: [[101, 102, 103,], [104, 105, 106], [201, 202, 203], [300, 305]],
+        roomPrices: [[60], [75], [85], [100]],
+        bookedRooms: [[], [], [], []],
+        listHotelRooms: function () {
+            var availableRooms = "<select id='selectedRoomNumber'>";
+            for (var i = 0; i < this.roomNumbers.length; i++) {
+                availableRooms += "<optgroup label =" + this.roomType[i] + '-' + this.roomPrices[i] + ">";
+                for (var j = 0; j < this.roomNumbers[i].length; j++) {
+                    availableRooms += "<option value=" + this.roomNumbers[i][j] + ">"
+                        + this.roomNumbers[i][j] + "</option>";
+                }
+                availableRooms += "</optgroup>";
+            }
+            availableRooms += "</select>";
+            document.getElementById("newRoom").innerHTML = availableRooms;
+        },
+        bookRoom: function () {
+            var selectedSingleRoom = document.getElementById("selectedRoomNumber").value;
+            for (var i = 0; i < this.roomNumbers.length; i++) {
+                for (var j = 0; j < this.roomNumbers[i].length; j++) {
+                    if (selectedSingleRoom == this.roomNumbers[i][j]) {
+                        this.bookedRooms[i].push(this.roomNumbers[i].splice(j, 1));
+                    }
+                }
+            }
+            this.listHotelRooms();
+            alert("Thank you for booking room: " + selectedSingleRoom);
+            // this.bookedRooms.push(this.roomNumbers.shift());
+        }
+
+    };
+    theAngularHotel.listHotelRooms();
+</script>
+
+</html>
